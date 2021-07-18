@@ -5,6 +5,7 @@
 
 #[macro_use]
 mod lang_items;
+mod my_log;
 mod sbi_call;
 mod std_out;
 mod sys_call;
@@ -22,9 +23,11 @@ fn clear_bss() {
 #[no_mangle]
 pub fn rust_main() -> ! {
     clear_bss();
-    println!("Hello, world!");
+    traceln!("Hello, world!");
+    debugln!("Hello, world!");
+    infoln!("Hello, world!");
+    warnln!("Hello, world!");
+    errorln!("Hello, world!");
     sbi_call::shutdown();
     panic!("Shutdown machine!");
 }
-
-

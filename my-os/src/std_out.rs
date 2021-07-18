@@ -7,7 +7,6 @@ struct Stdout;
 
 impl Write for Stdout {
     fn write_str(&mut self, s: &str) -> Result {
-        // sys_write(1, s.as_bytes());
         for c in s.chars() {
             console_putchar(c as usize);
         }
