@@ -22,13 +22,13 @@ pub fn init() {
 }
 
 #[no_mangle]
-pub fn trap_handler(cx: &mut TrapContext) -> &mut TrapContext {
+pub fn trap_handler(ctx: &mut TrapContext) -> &mut TrapContext {
     let scause = scause::read();
     let stval = stval::read();
     match scause.cause() {
         Trap::Exception(Exception::UserEnvCall) => {
-            cx.sepc += 4;
-            cx.x[10] = sys_call(cx.x[17], [cx.x[10], cx.x[11], cx.x[12]]) as usize;
+            ctx.sepc += 4;
+            ctx.x[10] = sys_call(ctx.x[17], [ctx.x[10], ctx.x[11], ctx.x[12]]) as usize;
         }
         Trap::Exception(Exception::StoreFault) | Trap::Exception(Exception::StorePageFault) => {
             debugln!("[kernel] PageFault in application, core dumped.");
@@ -46,7 +46,7 @@ pub fn trap_handler(cx: &mut TrapContext) -> &mut TrapContext {
             );
         }
     }
-    cx
+    ctx
 }
 
 pub use context::TrapContext;
