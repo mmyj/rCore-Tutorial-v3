@@ -24,7 +24,7 @@ fn clear_bss() {
     (sbss as usize..ebss as usize).for_each(|a| unsafe { (a as *mut u8).write_volatile(0) });
 }
 
-fn init_log_level(){
+fn init_log_level() {
     let log_level: Option<&'static str> = option_env!("LOG");
     unsafe {
         match log_level {
@@ -38,14 +38,42 @@ fn init_log_level(){
     }
 }
 
-#[no_mangle]
-pub fn rust_main() -> ! {
-    clear_bss();
-    init_log_level();
+fn test_info_level() {
     traceln!("Hello, world!");
     debugln!("Hello, world!");
     infoln!("Hello, world!");
     warnln!("Hello, world!");
     errorln!("Hello, world!");
+}
+
+fn print_mem_section() {
+    extern "C" {
+        fn stext();
+        fn etext();
+        fn srodata();
+        fn erodata();
+        fn sdata();
+        fn edata();
+        fn sbss();
+        fn ebss();
+        fn boot_stack();
+        fn boot_stack_top();
+    }
+    infoln!(".text [{:#x}, {:#x})", stext as usize, etext as usize);
+    infoln!(".rodata [{:#x}, {:#x})", srodata as usize, erodata as usize);
+    infoln!(".data [{:#x}, {:#x})", sdata as usize, edata as usize);
+    infoln!(
+        "boot_stack [{:#x}, {:#x})",
+        boot_stack as usize, boot_stack_top as usize
+    );
+    infoln!(".bss [{:#x}, {:#x})", sbss as usize, ebss as usize);
+}
+
+#[no_mangle]
+pub fn rust_main() -> ! {
+    clear_bss();
+    init_log_level();
+    test_info_level();
+    print_mem_section();
     panic!("done");
 }
