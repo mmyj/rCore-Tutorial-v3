@@ -2,8 +2,6 @@ use crate::trap::TrapContext;
 use core::cell::RefCell;
 use lazy_static::*;
 
-use crate::my_log;
-
 const USER_STACK_SIZE: usize = 4096 * 2;
 const KERNEL_STACK_SIZE: usize = 4096 * 2;
 const MAX_APP_NUM: usize = 16;

@@ -1,7 +1,6 @@
 mod context;
 
 use crate::batch::run_next_app;
-use crate::my_log;
 use crate::sys_call::sys_call;
 use riscv::register::{
     mtvec::TrapMode,
