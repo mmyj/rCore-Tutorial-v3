@@ -9,10 +9,12 @@ use core::option_env;
 
 #[macro_use]
 mod my_log;
+mod batch;
 mod lang_items;
 mod sbi_call;
 mod std_out;
 mod sys_call;
+mod trap;
 
 global_asm!(include_str!("entry.asm"));
 global_asm!(include_str!("link_app.S"));
@@ -37,14 +39,6 @@ fn init_log_level() {
             _ => my_log::set_my_log_level(LevelEnum::Info),
         };
     }
-}
-
-fn test_info_level() {
-    traceln!("Hello, world!");
-    debugln!("Hello, world!");
-    infoln!("Hello, world!");
-    warnln!("Hello, world!");
-    errorln!("Hello, world!");
 }
 
 fn print_mem_section() {
@@ -75,7 +69,6 @@ fn print_mem_section() {
 pub fn rust_main() -> ! {
     clear_bss();
     init_log_level();
-    test_info_level();
     print_mem_section();
     panic!("done");
 }

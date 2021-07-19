@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-fn sys_call(id: usize, args: [usize; 3]) -> isize {
+pub fn sys_call(id: usize, args: [usize; 3]) -> isize {
     let mut ret: isize = 0;
     unsafe {
         llvm_asm!("ecall"
