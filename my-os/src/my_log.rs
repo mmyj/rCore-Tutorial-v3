@@ -47,7 +47,7 @@ pub fn print(level: LevelEnum, args: Arguments) {
     };
     std_out::print(format_args!("{}[{:?}] ", level_color_code, level));
     std_out::print(args);
-    std_out::print(format_args!("{}", level_color_code));
+    std_out::print(format_args!("\x1b[0m"));
 }
 
 #[macro_export]
