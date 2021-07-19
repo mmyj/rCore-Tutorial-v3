@@ -70,5 +70,8 @@ pub fn rust_main() -> ! {
     clear_bss();
     init_log_level();
     print_mem_section();
+    trap::init();
+    batch::init();
+    batch::run_next_app();
     panic!("done");
 }

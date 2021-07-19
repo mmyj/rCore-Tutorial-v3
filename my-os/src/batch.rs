@@ -119,6 +119,7 @@ lazy_static! {
 }
 
 pub fn init() {
+    traceln!("init batch");
     print_app_info();
 }
 
