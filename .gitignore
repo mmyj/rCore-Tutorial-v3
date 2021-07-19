@@ -1,5 +1,7 @@
 .idea/*
 */target/*
 */Cargo.lock
-link_app.S
+*.S
 tools/
+.DS_Store/*
+.DS_Store
