@@ -2,14 +2,22 @@
 
 use crate::std_out;
 use core::fmt::Arguments;
+use core::borrow::{BorrowMut, Borrow};
+use core::marker::Copy;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum LevelEnum {
     Trace,
     Debug,
     Info,
     Warn,
     Error,
+}
+
+static mut _MY_LOG_LEVEL: LevelEnum = LevelEnum::Info;
+
+pub unsafe fn set_my_log_level(level: LevelEnum){
+    _MY_LOG_LEVEL = level
 }
 
 pub fn get_level(level: LevelEnum) -> i8 {
@@ -23,6 +31,13 @@ pub fn get_level(level: LevelEnum) -> i8 {
 }
 
 pub fn print(level: LevelEnum, args: Arguments) {
+    let mut my_log_level: LevelEnum = LevelEnum::Info;
+    unsafe {
+        my_log_level = _MY_LOG_LEVEL;
+    }
+    if get_level(level) < get_level(my_log_level) {
+        return;
+    }
     let level_color_code = match level {
         LevelEnum::Trace => "\x1b[90m",
         LevelEnum::Debug => "\x1b[32m",

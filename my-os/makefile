@@ -1,4 +1,7 @@
+LOG := INFO
+
 build:
+	export LOG=$(LOG)
 	cargo build --release
 
 bin: build
