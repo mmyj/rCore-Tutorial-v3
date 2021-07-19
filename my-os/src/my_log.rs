@@ -1,8 +1,8 @@
 #![allow(unused)]
 
 use crate::std_out;
+use core::borrow::{Borrow, BorrowMut};
 use core::fmt::Arguments;
-use core::borrow::{BorrowMut, Borrow};
 use core::marker::Copy;
 
 #[derive(Debug, Copy, Clone)]
@@ -16,7 +16,7 @@ pub enum LevelEnum {
 
 static mut _MY_LOG_LEVEL: LevelEnum = LevelEnum::Info;
 
-pub unsafe fn set_my_log_level(level: LevelEnum){
+pub unsafe fn set_my_log_level(level: LevelEnum) {
     _MY_LOG_LEVEL = level
 }
 

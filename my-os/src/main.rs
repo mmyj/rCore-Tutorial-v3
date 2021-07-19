@@ -9,10 +9,10 @@ use core::option_env;
 
 #[macro_use]
 mod my_log;
+mod lang_items;
 mod sbi_call;
 mod std_out;
 mod sys_call;
-mod lang_items;
 
 global_asm!(include_str!("entry.asm"));
 global_asm!(include_str!("link_app.S"));
@@ -65,7 +65,8 @@ fn print_mem_section() {
     infoln!(".data [{:#x}, {:#x})", sdata as usize, edata as usize);
     infoln!(
         "boot_stack [{:#x}, {:#x})",
-        boot_stack as usize, boot_stack_top as usize
+        boot_stack as usize,
+        boot_stack_top as usize
     );
     infoln!(".bss [{:#x}, {:#x})", sbss as usize, ebss as usize);
 }
