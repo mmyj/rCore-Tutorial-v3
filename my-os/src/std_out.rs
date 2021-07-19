@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use crate::sbi_call::console_putchar;
+use crate::sbi_call::console_put_char;
 use core::fmt::{self, Arguments, Result, Write};
 
 struct Stdout;
@@ -8,7 +8,7 @@ struct Stdout;
 impl Write for Stdout {
     fn write_str(&mut self, s: &str) -> Result {
         for c in s.chars() {
-            console_putchar(c as usize);
+            console_put_char(c as usize);
         }
         Ok(())
     }

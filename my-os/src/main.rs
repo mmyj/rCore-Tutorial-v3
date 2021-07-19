@@ -2,13 +2,14 @@
 #![no_main]
 #![feature(llvm_asm)]
 #![feature(global_asm)]
+#![feature(panic_info_message)]
 
 #[macro_use]
-mod lang_items;
 mod my_log;
 mod sbi_call;
 mod std_out;
 mod sys_call;
+mod lang_items;
 
 global_asm!(include_str!("entry.asm"));
 
@@ -28,6 +29,5 @@ pub fn rust_main() -> ! {
     infoln!("Hello, world!");
     warnln!("Hello, world!");
     errorln!("Hello, world!");
-    sbi_call::shutdown();
-    panic!("Shutdown machine!");
+    panic!("done");
 }

@@ -1,7 +1,7 @@
 #![allow(unused)]
 
 fn sbi_call(which: usize, arg0: usize, arg1: usize, arg2: usize) -> usize {
-    let mut ret;
+    let mut ret = 0;
     unsafe {
         llvm_asm!("ecall"
             : "={x10}" (ret)
@@ -13,14 +13,15 @@ fn sbi_call(which: usize, arg0: usize, arg1: usize, arg2: usize) -> usize {
     ret
 }
 
-const SBI_CONSOLE_PUTCHAR: usize = 1;
+const SBI_CONSOLE_PUT_CHAR: usize = 1;
 const SBI_SHUTDOWN: usize = 8;
 
 pub fn shutdown() -> ! {
+    traceln!("shutdown");
     sbi_call(SBI_SHUTDOWN, 0, 0, 0);
     panic!("It should shutdown!");
 }
 
-pub fn console_putchar(c: usize) {
-    sbi_call(SBI_CONSOLE_PUTCHAR, c, 0, 0);
+pub fn console_put_char(c: usize) {
+    sbi_call(SBI_CONSOLE_PUT_CHAR, c, 0, 0);
 }
