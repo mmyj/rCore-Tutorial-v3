@@ -1,8 +1,12 @@
+LOG := INFO
+TEST := OS
 
 build:
 	@export LOG=$(LOG)
 	@echo log level is $(LOG)
-	@cargo build --release
+	@export TEST=$(TEST)
+	@echo TEST is $(TEST)_TEST
+	cargo build --release
 
 bin: build
 	rust-objcopy --binary-architecture=riscv64 target/riscv64gc-unknown-none-elf/release/my-os --strip-all -O binary target/riscv64gc-unknown-none-elf/release/os.bin

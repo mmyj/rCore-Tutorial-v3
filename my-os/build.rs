@@ -1,15 +1,22 @@
 use std::fs::{read_dir, File};
 use std::io::{Result, Write};
 
+static TARGET_SOURCE_PATH: &str = "src/link_app.S";
+
 fn main() {
-    insert_unit_test_app_data().unwrap();
-    insert_os_test_app_data().unwrap();
+    let target_test: Option<&'static str> = option_env!("TEST");
+    unsafe {
+        match target_test {
+            Some("UNIT") => insert_unit_test_app_data().unwrap(),
+            Some("OS") | _ => insert_os_test_app_data().unwrap(),
+        };
+    }
 }
 
 static UNIT_TEST_TARGET_PATH: &str = "unit_test/bin/";
 
 fn insert_unit_test_app_data() -> Result<()> {
-    let mut f = File::create("src/unit_test_link_app.S").unwrap();
+    let mut f = File::create(TARGET_SOURCE_PATH).unwrap();
     let mut apps: Vec<_> = read_dir(UNIT_TEST_TARGET_PATH)
         .unwrap()
         .into_iter()
@@ -58,7 +65,7 @@ app_{0}_end:"#,
 static OS_TEST_TARGET_PATH: &str = "../user/target/riscv64gc-unknown-none-elf/release/";
 
 fn insert_os_test_app_data() -> Result<()> {
-    let mut f = File::create("src/os_test_link_app.S").unwrap();
+    let mut f = File::create(TARGET_SOURCE_PATH).unwrap();
     let mut apps: Vec<_> = read_dir("../user/src/bin")
         .unwrap()
         .into_iter()

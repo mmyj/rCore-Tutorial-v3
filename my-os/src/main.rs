@@ -17,8 +17,7 @@ mod sys_call;
 mod trap;
 
 global_asm!(include_str!("entry.asm"));
-global_asm!(include_str!("os_test_link_app.S"));
-global_asm!(include_str!("unit_test_link_app.S"));
+global_asm!(include_str!("link_app.S"));
 
 fn clear_bss() {
     extern "C" {

@@ -24,17 +24,18 @@ pub fn init() {
 pub fn trap_handler(ctx: &mut TrapContext) -> &mut TrapContext {
     let scause = scause::read();
     let stval = stval::read();
+    crate::traceln!("[kernel] scause = {:?}, stval = {:#x}", scause.cause(), stval);
     match scause.cause() {
         Trap::Exception(Exception::UserEnvCall) => {
             ctx.sepc += 4;
             ctx.x[10] = sys_call(ctx.x[17], [ctx.x[10], ctx.x[11], ctx.x[12]]) as usize;
         }
         Trap::Exception(Exception::StoreFault) | Trap::Exception(Exception::StorePageFault) => {
-            debugln!("[kernel] PageFault in application, core dumped.");
+            crate::debugln!("[kernel] PageFault in application, core dumped.");
             run_next_app();
         }
         Trap::Exception(Exception::IllegalInstruction) => {
-            debugln!("[kernel] IllegalInstruction in application, core dumped.");
+            crate::debugln!("[kernel] IllegalInstruction in application, core dumped.");
             run_next_app();
         }
         _ => {

@@ -2,7 +2,7 @@ use crate::trap::TrapContext;
 use core::cell::RefCell;
 use lazy_static::*;
 
-const USER_STACK_SIZE: usize = 4096 * 2;
+const USER_STACK_SIZE: usize = 4096;
 const KERNEL_STACK_SIZE: usize = 4096 * 2;
 const MAX_APP_NUM: usize = 16;
 const APP_BASE_ADDRESS: usize = 0x80400000;
@@ -47,11 +47,13 @@ impl UserStack {
 struct AppManager {
     inner: RefCell<AppManagerInner>,
 }
+
 struct AppManagerInner {
     num_app: usize,
     current_app: usize,
     app_start: [usize; MAX_APP_NUM + 1],
 }
+
 unsafe impl Sync for AppManager {}
 
 impl AppManagerInner {
@@ -141,4 +143,10 @@ pub fn run_next_app() -> ! {
         )) as *const _ as usize);
     }
     panic!("Unreachable in batch::run_current_app!");
+}
+
+pub fn in_app_memory_zoom(addr: usize) -> bool {
+    let start = APP_BASE_ADDRESS;
+    let end = APP_BASE_ADDRESS + APP_SIZE_LIMIT;
+    addr >= start && addr < end
 }
