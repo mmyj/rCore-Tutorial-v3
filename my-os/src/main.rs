@@ -3,6 +3,7 @@
 #![feature(llvm_asm)]
 #![feature(global_asm)]
 #![feature(panic_info_message)]
+#![feature(const_raw_ptr_to_usize_cast)]
 
 use crate::my_log::LevelEnum;
 use core::option_env;

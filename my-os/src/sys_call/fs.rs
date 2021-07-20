@@ -5,9 +5,15 @@ use crate::batch::in_app_memory_zoom;
 pub fn sys_call_write(fd: usize, buf: *const u8, len: usize) -> isize {
     match fd {
         FD_STDOUT => {
-            crate::traceln!("[kernel] FD_STDOUT, buf = {:#x}, len = {}", buf as usize, len);
+            crate::traceln!(
+                "[kernel] FD_STDOUT, buf = {:#x}, len = {}",
+                buf as usize,
+                len
+            );
             // 访问越界检查
-            if !(in_app_memory_zoom(buf as usize) && in_app_memory_zoom((buf as usize) + (len as usize))) {
+            if !(in_app_memory_zoom(buf as usize)
+                && in_app_memory_zoom((buf as usize) + (len as usize)))
+            {
                 crate::debugln!("[kernel] Invalid memory access in sys_write!");
                 return -1 as isize;
             }

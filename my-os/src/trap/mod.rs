@@ -24,7 +24,11 @@ pub fn init() {
 pub fn trap_handler(ctx: &mut TrapContext) -> &mut TrapContext {
     let scause = scause::read();
     let stval = stval::read();
-    crate::traceln!("[kernel] scause = {:?}, stval = {:#x}", scause.cause(), stval);
+    crate::traceln!(
+        "[kernel] scause = {:?}, stval = {:#x}",
+        scause.cause(),
+        stval
+    );
     match scause.cause() {
         Trap::Exception(Exception::UserEnvCall) => {
             ctx.sepc += 4;

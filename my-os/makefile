@@ -1,5 +1,5 @@
 LOG := INFO
-TEST := OS
+TEST := UNIT
 
 build:
 	@export LOG=$(LOG)

@@ -61,7 +61,6 @@ app_{0}_end:"#,
     Ok(())
 }
 
-
 static OS_TEST_TARGET_PATH: &str = "../user/target/riscv64gc-unknown-none-elf/release/";
 
 fn insert_os_test_app_data() -> Result<()> {
@@ -77,12 +76,16 @@ fn insert_os_test_app_data() -> Result<()> {
         .collect();
     apps.sort();
 
-    writeln!(f, r#"
+    writeln!(
+        f,
+        r#"
     .align 3
     .section .data
     .global _num_app
 _num_app:
-    .quad {}"#, apps.len())?;
+    .quad {}"#,
+        apps.len()
+    )?;
 
     for i in 0..apps.len() {
         writeln!(f, r#"    .quad app_{}_start"#, i)?;
@@ -91,13 +94,17 @@ _num_app:
 
     for (idx, app) in apps.iter().enumerate() {
         println!("app_{}: {}", idx, app);
-        writeln!(f, r#"
+        writeln!(
+            f,
+            r#"
     .section .data
     .global app_{0}_start
     .global app_{0}_end
 app_{0}_start:
     .incbin "{2}{1}.bin"
-app_{0}_end:"#, idx, app, OS_TEST_TARGET_PATH)?;
+app_{0}_end:"#,
+            idx, app, OS_TEST_TARGET_PATH
+        )?;
     }
     Ok(())
 }

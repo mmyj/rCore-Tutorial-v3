@@ -21,6 +21,7 @@ struct UserStack {
 static KERNEL_STACK: KernelStack = KernelStack {
     data: [0; KERNEL_STACK_SIZE],
 };
+
 static USER_STACK: UserStack = UserStack {
     data: [0; USER_STACK_SIZE],
 };
@@ -118,8 +119,17 @@ lazy_static! {
     };
 }
 
+static mut USER_STACK_BASE: usize = 0;
+static mut KERNEL_STACK_BASE: usize = 0;
+
 pub fn init() {
     traceln!("init batch");
+    unsafe {
+        USER_STACK_BASE = USER_STACK.data.as_ptr() as usize;
+        KERNEL_STACK_BASE = KERNEL_STACK.data.as_ptr() as usize;
+        debugln!("[kernel] USER_STACK [{:#x}, {:#x}]",USER_STACK_BASE,USER_STACK_BASE+ USER_STACK_SIZE);
+        debugln!("[kernel] KERNEL_STACK [{:#x}, {:#x}]",KERNEL_STACK_BASE,KERNEL_STACK_BASE+ KERNEL_STACK_SIZE);
+    }
     print_app_info();
 }
 
@@ -146,7 +156,7 @@ pub fn run_next_app() -> ! {
 }
 
 pub fn in_app_memory_zoom(addr: usize) -> bool {
-    let start = APP_BASE_ADDRESS;
-    let end = APP_BASE_ADDRESS + APP_SIZE_LIMIT;
-    addr >= start && addr < end
+    let user_mem_start = APP_BASE_ADDRESS;
+    let user_mem_end = APP_BASE_ADDRESS + APP_SIZE_LIMIT;
+    addr >= user_mem_start && addr < user_mem_end
 }
