@@ -10,11 +10,14 @@ use core::option_env;
 
 #[macro_use]
 mod my_log;
-mod batch;
+mod config;
 mod lang_items;
+mod loader;
 mod sbi_call;
 mod std_out;
 mod sys_call;
+mod task;
+mod timer;
 mod trap;
 
 global_asm!(include_str!("entry.asm"));
@@ -72,7 +75,9 @@ pub fn rust_main() -> ! {
     init_log_level();
     print_mem_section();
     trap::init();
-    batch::init();
-    batch::run_next_app();
-    infoln!("done");
+    loader::load_apps();
+    // trap::enable_timer_interrupt();
+    // timer::set_next_trigger();
+    task::run_first_task();
+    panic!("done");
 }

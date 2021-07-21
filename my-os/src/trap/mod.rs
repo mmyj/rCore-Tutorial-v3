@@ -1,11 +1,12 @@
 mod context;
 
-use crate::batch::run_next_app;
 use crate::sys_call::sys_call;
+use crate::task::{exit_current_and_run_next, suspend_current_and_run_next};
+use crate::timer::set_next_trigger;
 use riscv::register::{
     mtvec::TrapMode,
-    scause::{self, Exception, Trap},
-    stval, stvec,
+    scause::{self, Exception, Interrupt, Trap},
+    sie, stval, stvec,
 };
 
 global_asm!(include_str!("trap.S"));
@@ -17,6 +18,12 @@ pub fn init() {
     }
     unsafe {
         stvec::write(__alltraps as usize, TrapMode::Direct);
+    }
+}
+
+pub fn enable_timer_interrupt() {
+    unsafe {
+        sie::set_stimer();
     }
 }
 
@@ -34,13 +41,14 @@ pub fn trap_handler(ctx: &mut TrapContext) -> &mut TrapContext {
             ctx.sepc += 4;
             ctx.x[10] = sys_call(ctx.x[17], [ctx.x[10], ctx.x[11], ctx.x[12]]) as usize;
         }
-        Trap::Exception(Exception::StoreFault) | Trap::Exception(Exception::StorePageFault) => {
-            crate::debugln!("[kernel] PageFault in application, core dumped.");
-            run_next_app();
+        Trap::Exception(Exception::StoreFault)
+        | Trap::Exception(Exception::StorePageFault)
+        | Trap::Exception(Exception::IllegalInstruction) => {
+            exit_current_and_run_next();
         }
-        Trap::Exception(Exception::IllegalInstruction) => {
-            crate::debugln!("[kernel] IllegalInstruction in application, core dumped.");
-            run_next_app();
+        Trap::Interrupt(Interrupt::SupervisorTimer) => {
+            set_next_trigger();
+            suspend_current_and_run_next();
         }
         _ => {
             panic!(

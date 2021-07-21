@@ -9,8 +9,8 @@
     .globl __switch
 __switch:
     # __switch(
-    #     current_task_cx_ptr2: &*const TaskContext,
-    #     next_task_cx_ptr2: &*const TaskContext
+    #     ptr_to_current_task_ctx_ptr: &*const TaskContext,
+    #     ptr_to_next_task_ctx_ptr: &*const TaskContext
     # )
     # push TaskContext to current sp and save its address to where a0 points to
     addi sp, sp, -13*8

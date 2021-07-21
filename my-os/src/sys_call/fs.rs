@@ -1,6 +1,6 @@
 const FD_STDOUT: usize = 1;
 
-use crate::batch::in_app_memory_zoom;
+use crate::task::in_app_memory_zoom;
 
 pub fn sys_call_write(fd: usize, buf: *const u8, len: usize) -> isize {
     match fd {

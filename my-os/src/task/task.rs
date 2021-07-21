@@ -1,11 +1,35 @@
+#[derive(Copy, Clone)]
 pub struct TaskControlBlock {
-    pub task_cx_ptr: usize,
-    pub task_status: TaskStatus,
+    task_ctx_ptr: usize,
+    task_status: TaskStatus,
+}
+
+pub fn default_task_control_block() -> TaskControlBlock {
+    TaskControlBlock {
+        task_ctx_ptr: 0,
+        task_status: TaskStatus::UnInit,
+    }
+}
+
+pub fn new_task_control_block(addr: usize, status: TaskStatus) -> TaskControlBlock {
+    TaskControlBlock {
+        task_ctx_ptr: addr,
+        task_status: status,
+    }
 }
 
 impl TaskControlBlock {
-    pub fn get_task_cx_ptr2(&self) -> *const usize {
-        &self.task_cx_ptr as *const usize
+    pub fn get_ptr_to_task_ctx_ptr(&self) -> *const usize {
+        &self.task_ctx_ptr as *const usize
+    }
+    pub fn set_ptr_to_task_ctx_ptr(&mut self, addr: usize) {
+        self.task_ctx_ptr = addr;
+    }
+    pub fn get_task_status(&self) -> TaskStatus {
+        self.task_status
+    }
+    pub fn set_task_status(&mut self, task_status: TaskStatus) {
+        self.task_status = task_status;
     }
 }
 
