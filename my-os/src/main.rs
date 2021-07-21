@@ -7,6 +7,7 @@
 
 use crate::my_log::LevelEnum;
 use core::option_env;
+use crate::sbi_call::shutdown;
 
 #[macro_use]
 mod my_log;
@@ -58,15 +59,27 @@ fn print_mem_section() {
         fn boot_stack();
         fn boot_stack_top();
     }
-    infoln!(".text [{:#x}, {:#x})", stext as usize, etext as usize);
-    infoln!(".rodata [{:#x}, {:#x})", srodata as usize, erodata as usize);
-    infoln!(".data [{:#x}, {:#x})", sdata as usize, edata as usize);
     infoln!(
-        "boot_stack [{:#x}, {:#x})",
+        "[kernel] .text [{:#x}, {:#x})",
+        stext as usize,
+        etext as usize
+    );
+    infoln!(
+        "[kernel] .rodata [{:#x}, {:#x})",
+        srodata as usize,
+        erodata as usize
+    );
+    infoln!(
+        "[kernel] .data [{:#x}, {:#x})",
+        sdata as usize,
+        edata as usize
+    );
+    infoln!(
+        "[kernel] boot_stack [{:#x}, {:#x})",
         boot_stack as usize,
         boot_stack_top as usize
     );
-    infoln!(".bss [{:#x}, {:#x})", sbss as usize, ebss as usize);
+    infoln!("[kernel] .bss [{:#x}, {:#x})", sbss as usize, ebss as usize);
 }
 
 #[no_mangle]
@@ -79,5 +92,6 @@ pub fn rust_main() -> ! {
     // trap::enable_timer_interrupt();
     // timer::set_next_trigger();
     task::run_first_task();
-    panic!("done");
+    crate::infoln!("all done");
+    shutdown()
 }

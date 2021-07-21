@@ -32,7 +32,7 @@ pub fn trap_handler(ctx: &mut TrapContext) -> &mut TrapContext {
     let scause = scause::read();
     let stval = stval::read();
     crate::traceln!(
-        "[kernel] scause = {:?}, stval = {:#x}",
+        "[kernel/trap] scause = {:?}, stval = {:#x}",
         scause.cause(),
         stval
     );
@@ -52,7 +52,7 @@ pub fn trap_handler(ctx: &mut TrapContext) -> &mut TrapContext {
         }
         _ => {
             panic!(
-                "Unsupported trap {:?}, stval = {:#x}!",
+                "[kernel/trap] Unsupported trap {:?}, stval = {:#x}!",
                 scause.cause(),
                 stval
             );

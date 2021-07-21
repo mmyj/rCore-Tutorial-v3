@@ -6,7 +6,7 @@ pub fn sys_call_write(fd: usize, buf: *const u8, len: usize) -> isize {
     match fd {
         FD_STDOUT => {
             crate::traceln!(
-                "[kernel] FD_STDOUT, buf = {:#x}, len = {}",
+                "[kernel/sys_call/sys_call_write] FD_STDOUT, buf = {:#x}, len = {}",
                 buf as usize,
                 len
             );
@@ -14,7 +14,7 @@ pub fn sys_call_write(fd: usize, buf: *const u8, len: usize) -> isize {
             if !(in_app_memory_zoom(buf as usize)
                 && in_app_memory_zoom((buf as usize) + (len as usize)))
             {
-                crate::debugln!("[kernel] Invalid memory access in sys_write!");
+                crate::debugln!("[kernel/sys_call/sys_call_write] Invalid memory access in sys_write!");
                 return -1 as isize;
             }
             let slice = unsafe { core::slice::from_raw_parts(buf, len) };
@@ -23,7 +23,7 @@ pub fn sys_call_write(fd: usize, buf: *const u8, len: usize) -> isize {
             len as isize
         }
         _ => {
-            crate::debugln!("Unsupported fd in sys_write!, fd {}", fd);
+            crate::debugln!("[kernel/sys_call/sys_call_write] Unsupported fd in sys_write!, fd {}", fd);
             -1 as isize
         }
     }

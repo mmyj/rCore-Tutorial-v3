@@ -44,10 +44,11 @@ lazy_static! {
 impl TaskManager {
     fn run_first_task(&self) {
         self.inner.borrow_mut().tasks[0].set_task_status(TaskStatus::Running);
-        let ptr_next_task_ctx_ptr = self.inner.borrow().tasks[0].get_ptr_to_task_ctx_ptr();
+        let ptr_to_next_task_ctx_ptr = self.inner.borrow().tasks[0].get_ptr_to_task_ctx_ptr();
         let _unused: usize = 0;
         unsafe {
-            __switch(&_unused as *const _, ptr_next_task_ctx_ptr);
+            crate::traceln!("[kernel/loader] run_first_task, next_task_ctx_ptr = {:#x}", *ptr_to_next_task_ctx_ptr);
+            __switch(&_unused as *const _, ptr_to_next_task_ctx_ptr);
         }
     }
 
@@ -84,14 +85,14 @@ impl TaskManager {
             core::mem::drop(inner);
             unsafe {
                 traceln!(
-                    "current_task_ctx_ptr = {:#x}, next_task_ctx_ptr = {:#x}",
+                    "[kernel/loader] current_task_ctx_ptr = {:#x}, next_task_ctx_ptr = {:#x}",
                     *ptr_to_current_task_ctx_ptr as usize,
                     *ptr_to_next_task_ctx_ptr as usize
                 );
                 __switch(ptr_to_current_task_ctx_ptr, ptr_to_next_task_ctx_ptr);
             }
         } else {
-            panic!("[TaskManager] All applications completed!");
+            panic!("[kernel/loader] All applications completed!");
         }
     }
 }

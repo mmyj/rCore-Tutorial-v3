@@ -97,6 +97,6 @@ pub fn init_app_ctx(app_id: usize) -> &'static TaskContext {
 fn print_app_base() {
     for i in 0..get_num_app() {
         let base_i = get_base_i(i);
-        debugln!("[loader] app_{} base = {:#x}", i, base_i);
+        debugln!("[kernel/loader] app_{} base = {:#x}", i, base_i);
     }
 }
