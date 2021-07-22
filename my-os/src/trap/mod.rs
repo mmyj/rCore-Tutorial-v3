@@ -2,7 +2,7 @@ mod context;
 
 use crate::sys_call::sys_call;
 use crate::task::{exit_current_and_run_next, suspend_current_and_run_next};
-use crate::timer::set_next_trigger;
+use crate::timer::set_next_tick_trigger;
 use riscv::register::{
     mtvec::TrapMode,
     scause::{self, Exception, Interrupt, Trap},
@@ -47,7 +47,7 @@ pub fn trap_handler(ctx: &mut TrapContext) -> &mut TrapContext {
             exit_current_and_run_next();
         }
         Trap::Interrupt(Interrupt::SupervisorTimer) => {
-            set_next_trigger();
+            set_next_tick_trigger();
             suspend_current_and_run_next();
         }
         _ => {

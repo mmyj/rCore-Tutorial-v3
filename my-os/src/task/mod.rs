@@ -7,7 +7,7 @@ use crate::loader::{get_num_app, init_app_ctx};
 use core::cell::RefCell;
 use lazy_static::*;
 use switch::__switch;
-use task::{default_task_control_block, new_task_control_block, TaskControlBlock, TaskStatus};
+use task::{default_task_control_block, TaskControlBlock, TaskStatus};
 
 pub use context::TaskContext;
 
@@ -47,7 +47,10 @@ impl TaskManager {
         let ptr_to_next_task_ctx_ptr = self.inner.borrow().tasks[0].get_ptr_to_task_ctx_ptr();
         let _unused: usize = 0;
         unsafe {
-            crate::traceln!("[kernel/loader] run_first_task, next_task_ctx_ptr = {:#x}", *ptr_to_next_task_ctx_ptr);
+            crate::traceln!(
+                "[kernel/loader] run_first_task, next_task_ctx_ptr = {:#x}",
+                *ptr_to_next_task_ctx_ptr
+            );
             __switch(&_unused as *const _, ptr_to_next_task_ctx_ptr);
         }
     }
@@ -74,8 +77,9 @@ impl TaskManager {
             .find(|id| inner.tasks[*id].get_task_status() == TaskStatus::Ready)
     }
 
-    fn run_next_task(&self) {
-        if let Some(next) = self.find_next_task() {
+    fn run_next_task(&self) -> Option<usize> {
+        let next = self.find_next_task();
+        if let Some(next) = next {
             let mut inner = self.inner.borrow_mut();
             let current = inner.current_task;
             inner.tasks[next].set_task_status(TaskStatus::Running);
@@ -92,8 +96,9 @@ impl TaskManager {
                 __switch(ptr_to_current_task_ctx_ptr, ptr_to_next_task_ctx_ptr);
             }
         } else {
-            panic!("[kernel/loader] All applications completed!");
+            crate::infoln!("[kernel/loader] All applications completed!");
         }
+        next
     }
 }
 
@@ -101,8 +106,8 @@ pub fn run_first_task() {
     TASK_MANAGER.run_first_task();
 }
 
-fn run_next_task() {
-    TASK_MANAGER.run_next_task();
+fn run_next_task() -> Option<usize> {
+    TASK_MANAGER.run_next_task()
 }
 
 fn mark_current_suspended() {
@@ -118,11 +123,11 @@ pub fn suspend_current_and_run_next() {
     run_next_task();
 }
 
-pub fn exit_current_and_run_next() {
+pub fn exit_current_and_run_next() -> Option<usize> {
     mark_current_exited();
-    run_next_task();
+    run_next_task()
 }
 
-pub fn in_app_memory_zoom(addr: usize) -> bool {
+pub fn in_app_memory_zoom(_addr: usize) -> bool {
     true
 }

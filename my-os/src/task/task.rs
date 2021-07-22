@@ -11,13 +11,6 @@ pub fn default_task_control_block() -> TaskControlBlock {
     }
 }
 
-pub fn new_task_control_block(addr: usize, status: TaskStatus) -> TaskControlBlock {
-    TaskControlBlock {
-        task_ctx_ptr: addr,
-        task_status: status,
-    }
-}
-
 impl TaskControlBlock {
     pub fn get_ptr_to_task_ctx_ptr(&self) -> *const usize {
         &self.task_ctx_ptr as *const usize

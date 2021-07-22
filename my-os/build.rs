@@ -5,12 +5,10 @@ static TARGET_SOURCE_PATH: &str = "src/link_app.S";
 
 fn main() {
     let target_test: Option<&'static str> = option_env!("TEST");
-    unsafe {
-        match target_test {
-            Some("UNIT") => insert_unit_test_app_data().unwrap(),
-            Some("OS") | _ => insert_os_test_app_data().unwrap(),
-        };
-    }
+    match target_test {
+        Some("UNIT") => insert_unit_test_app_data().unwrap(),
+        Some("OS") | _ => insert_os_test_app_data().unwrap(),
+    };
 }
 
 static UNIT_TEST_TARGET_PATH: &str = "unit_test/bin/";

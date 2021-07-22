@@ -6,8 +6,8 @@
 #![feature(const_raw_ptr_to_usize_cast)]
 
 use crate::my_log::LevelEnum;
-use core::option_env;
 use crate::sbi_call::shutdown;
+use core::option_env;
 
 #[macro_use]
 mod my_log;
@@ -89,8 +89,8 @@ pub fn rust_main() -> ! {
     print_mem_section();
     trap::init();
     loader::load_apps();
-    // trap::enable_timer_interrupt();
-    // timer::set_next_trigger();
+    trap::enable_timer_interrupt();
+    timer::set_next_tick_trigger();
     task::run_first_task();
     crate::infoln!("all done");
     shutdown()

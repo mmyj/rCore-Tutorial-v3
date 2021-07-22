@@ -1,10 +1,12 @@
 use crate::task::{exit_current_and_run_next, suspend_current_and_run_next};
 use crate::timer::get_time_ms;
 
-pub fn sys_call_exit(exit_code: i32) -> ! {
+pub fn sys_call_exit(exit_code: i32) -> isize {
     crate::debugln!("[kernel] Application exited with code {}", exit_code);
-    exit_current_and_run_next();
-    panic!("[kernel] Unreachable!");
+    if let None = exit_current_and_run_next() {
+        crate::shutdown()
+    }
+    0
 }
 
 pub fn sys_yield() -> isize {
