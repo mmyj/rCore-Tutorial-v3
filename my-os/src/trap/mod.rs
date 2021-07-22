@@ -43,8 +43,13 @@ pub fn trap_handler(ctx: &mut TrapContext) -> &mut TrapContext {
         }
         Trap::Exception(Exception::StoreFault)
         | Trap::Exception(Exception::StorePageFault)
+        | Trap::Exception(Exception::LoadFault)
         | Trap::Exception(Exception::IllegalInstruction) => {
-            exit_current_and_run_next();
+            panic!(
+                "[kernel/trap] scause = {:?}, stval = {:#x}",
+                scause.cause(),
+                stval
+            );
         }
         Trap::Interrupt(Interrupt::SupervisorTimer) => {
             set_next_tick_trigger();

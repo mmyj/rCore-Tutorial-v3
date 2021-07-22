@@ -2,14 +2,15 @@ mod context;
 mod switch;
 mod task;
 
-use crate::config::MAX_APP_NUM;
-use crate::loader::{get_num_app, init_app_ctx};
+use crate::config::{APP_SIZE_LIMIT, MAX_APP_NUM};
+use crate::loader::{get_base_i, get_num_app, init_app_ctx};
 use core::cell::RefCell;
 use lazy_static::*;
 use switch::__switch;
 use task::{default_task_control_block, TaskControlBlock, TaskStatus};
 
 pub use context::TaskContext;
+use core::borrow::Borrow;
 
 pub struct TaskManager {
     num_app: usize,
@@ -28,7 +29,13 @@ lazy_static! {
         let num_app = get_num_app();
         let mut tasks = [default_task_control_block(); MAX_APP_NUM];
         for i in 0..num_app {
-            tasks[i].set_ptr_to_task_ctx_ptr(init_app_ctx(i) as *const _ as usize);
+            let task_ctx_ptr = init_app_ctx(i) as *const _ as usize;
+            crate::debugln!(
+                "[kernel/task] task[{}] task_ctx_ptr = {:#x}",
+                i,
+                task_ctx_ptr
+            );
+            tasks[i].set_ptr_to_task_ctx_ptr(task_ctx_ptr);
             tasks[i].set_task_status(TaskStatus::Ready);
         }
         TaskManager {
@@ -89,7 +96,9 @@ impl TaskManager {
             core::mem::drop(inner);
             unsafe {
                 traceln!(
-                    "[kernel/loader] current_task_ctx_ptr = {:#x}, next_task_ctx_ptr = {:#x}",
+                    "[kernel/loader] current_task_no = {}, next_task_no = {}, current_task_ctx_ptr = {:#x}, next_task_ctx_ptr = {:#x}",
+                    current,
+                    next,
                     *ptr_to_current_task_ctx_ptr as usize,
                     *ptr_to_next_task_ctx_ptr as usize
                 );
@@ -128,6 +137,9 @@ pub fn exit_current_and_run_next() -> Option<usize> {
     run_next_task()
 }
 
-pub fn in_app_memory_zoom(_addr: usize) -> bool {
-    true
+pub fn in_app_memory_zoom(addr: usize) -> bool {
+    let mut inner = TASK_MANAGER.inner.borrow_mut();
+    let current_task = inner.current_task;
+    let base = get_base_i(current_task);
+    base <= addr && addr < base + APP_SIZE_LIMIT
 }

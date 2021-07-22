@@ -1,3 +1,6 @@
+use crate::trap::TrapContext;
+use core::borrow::Borrow;
+
 #[repr(C)]
 pub struct TaskContext {
     ra: usize,

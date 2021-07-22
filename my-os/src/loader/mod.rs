@@ -1,6 +1,7 @@
 use crate::config::*;
 use crate::task::TaskContext;
 use crate::trap::TrapContext;
+use core::borrow::Borrow;
 
 #[derive(Copy, Clone)]
 #[repr(align(4096))]
@@ -49,7 +50,7 @@ impl UserStack {
     }
 }
 
-fn get_base_i(app_id: usize) -> usize {
+pub fn get_base_i(app_id: usize) -> usize {
     APP_BASE_ADDRESS + app_id * APP_SIZE_LIMIT
 }
 

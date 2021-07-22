@@ -78,6 +78,7 @@ macro_rules! warnln {
     }
 }
 
+#[macro_export]
 macro_rules! errorln {
     ($fmt: literal $(, $($arg: tt)+)?) => {
         $crate::my_log::print(crate::my_log::LevelEnum::Error, format_args!(concat!($fmt, "\n") $(, $($arg)+)?));
